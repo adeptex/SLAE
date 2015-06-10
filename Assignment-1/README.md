@@ -44,6 +44,12 @@ All of these, including parameter structures and values, were looked up in the L
 
 For the implementation part, a generic program was written in NASM to get the opcodes. Port configuration was done with Python using the opcodes from on the NASM prototype as a prototype and configuring the port opcodes based on user input. 
 
+It is worth mentioning that this shellcode is by no means meant to be the shortest possible. Rather, the idea was to get a thorough grasp of every step necessary to achive the desired result. Detailed comments are added for maximum clarity
+
+
+
+.
+
 ## bind.nasm:
 
 ```nasm
