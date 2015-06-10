@@ -292,4 +292,4 @@ print
 
 A sample run produces the following output:
 
-! [alt text](https://github.com/adeptex/SLAE/Assignment.png "Logo Title Text 1")
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-1/a1.png "Example")
