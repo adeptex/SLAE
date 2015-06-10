@@ -7,14 +7,14 @@ http://securitytube-training.com/online-courses/securitytube-linux-assembly-expe
 Student ID: SLAE-670
 
 
-**Problem:**
+### Problem
 - Create a Shell_Bind_TCP shellcode 
 	- Binds to a port
 	- Execs Shell on incoming connection
 - Port number should be easily configurable
 
 
-**Solution:**
+### Solution
 
 To complete this task, it was necessary to research the steps that must be taken in order to open a port, receive an incomming connection, and gain system command execution powers remotely. 
 
@@ -223,6 +223,8 @@ execve:
 
 And the final Python implementation:
 
+## bind.py
+
 ```python
 #!/usr/bin/python
 
@@ -291,6 +293,8 @@ print "Executable: %s" % sys.argv[2]
 print
 
 ```
+
+## Example
 
 A sample run produces the following output:
 
