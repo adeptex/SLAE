@@ -27,26 +27,26 @@ By going over how this is done in C, it was possible to obtain the list of appro
 5. dup2
 6. execve
 
-Going over the steps, first we create a socket file descriptor with the socket() system call. Then we enable any options we see fit (if any) with setsockopt(), bind the socket descriptor to a port with the bind() call, and begin listening for incomming connections with the listen() call. Once the socket is ready to receive connections, with the dup() system call we remap stdin, stdout and stderr streams to the socket descriptor we created, and execute /bin/sh with the execve() system call. The effect produced is that i/o interaction is passed to the socket, which effectively allows a remote computer to connect, send system commands and receive their output via the socket. 
+Going over the steps, first we create a socket file descriptor with the `socket()` system call. Then we enable any options we see fit (if any) with `setsockopt()`, bind the socket descriptor to a port with the `bind()` call, and begin listening for incomming connections with the `listen()` call. Once the socket is ready to receive connections, with the `dup2()` system call we remap stdin, stdout and stderr streams to the socket descriptor we created, and execute `/bin/sh` with the `execve()` system call. The effect produced is that i/o interaction is passed to the socket, which effectively allows a remote computer to connect, send system commands and receive their output via the socket. 
 
-All system calls, parameter structures, values, etc. used in the NASM code were looked up in the Linux **man** pages and the following libraries:
+All system calls, parameter structures, values, etc. used in the NASM code were looked up in the Linux `man` pages and the following libraries:
 
 
 | What              | Where |
 |:------------------|:------------------|
-| system syscalls   | /usr/include/i386-linux-gnu/asm/unistd_32.h |
-| socket syscalls   | /usr/include/linux/net.h |
-| socket domains     | /usr/include/netinet/in.h   (Internet Address Family) |
-| socket types       |  /usr/include/i386-linux-gnu/bits/socket_type.h |
-| socket protocols    | /usr/include/i386-linux-gnu/bits/socket.h |
-| socket options      | /usr/include/asm-generic/socket.h |
+| system syscalls   | `/usr/include/i386-linux-gnu/asm/unistd_32.h` |
+| socket syscalls   | `/usr/include/linux/net.h` |
+| socket domains     | `/usr/include/netinet/in.h`   (Internet Address Family) |
+| socket types       |  `/usr/include/i386-linux-gnu/bits/socket_type.h` |
+| socket protocols    | `/usr/include/i386-linux-gnu/bits/socket.h` |
+| socket options      | `/usr/include/asm-generic/socket.h` |
 
 
 
 
 For the implementation part, a generic program was written in NASM to get the opcodes. Port configuration was done with Python using the opcodes from on the NASM prototype as a prototype and configuring the port opcodes based on user input. 
 
-It is worth mentioning that this shellcode is by no means meant to be the shortest possible. Rather, the idea was to get a thorough grasp of every step necessary to achive the desired result. Detailed comments are added for maximum clarity
+	It is worth mentioning that this shellcode is by no means meant to be the shortest possible. Rather, the idea was to get a thorough grasp of every step necessary to achieve the desired result. Detailed comments are added for maximum clarity
 
 
 
