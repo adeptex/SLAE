@@ -184,3 +184,9 @@ if error:
 
 args.func(args)
 ```
+
+## Example
+
+A sample run produces the following output:
+
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-3/a3.png "Example")
