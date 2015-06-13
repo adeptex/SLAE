@@ -148,7 +148,7 @@ execve:
 
 The following Python program allows user to input the address, port and an option filename to generate the reverse TCP shell shellcode:
 
-## bind.py
+## reverse.py
 
 ```python
 #!/usr/bin/python
@@ -190,7 +190,7 @@ print sc
 #####	Generate an executable 		
 
 
-if len(sys.argv) < 3: sys.exit()
+if len(sys.argv) < 4: sys.exit()
 
 import os
 
