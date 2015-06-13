@@ -18,14 +18,14 @@ Student ID: SLAE-670
 
 To complete this task, it was necessary to research the steps that must be taken in order to connect to a remote port and pass command execution to it. 
 
-By going over how this is done in C, it was possible to obtain the list of appropriate system calls that must be used to open a socket. Other shellcode found in the wild was studied to understand how command execution control can be transfered to the remotely connected computer via the socket. The system calls basically amount to the following:
+By going over how this is done in C, it was possible to obtain the list of appropriate system calls that must be used to accomplish the task. Other shellcode found in the wild was studied to understand how command execution control can be transfered to the remotely connected computer via the socket. The system calls basically amount to the following:
 
 1. socket
 2. connect
 3. dup2
 4. execve
 
-Going over the steps, first we create a socket file descriptor with the `socket()` system call. Then we connect it to a remote address and port with `connect()`; remap i/o to the socket file descriptor with `dup()`; and finally, execute `/bin/sh` with the `execve()` system call. The effect produced is an interactive remote system command shell.
+Going over the steps, first we create a socket file descriptor with `socket()`; then we connect it to a remote address and port with `connect()`; remap i/o to the socket file descriptor with `dup()`; and finally, execute `/bin/sh` with `execve()`. The effect produced is an interactive remote system command shell.
 
 All system calls, parameter structures, values, etc. used in the NASM code were looked up in the Linux `man` pages and the following libraries:
 
