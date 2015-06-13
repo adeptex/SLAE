@@ -100,6 +100,9 @@ def execShellcode(args):
 
 def bindShellcode(args):
 
+	if args.lport not in range(1,65536):
+		sys.exit("[!] Bad LPORT!")
+
 	port = struct.pack(">H", int(args.lport))
 
 	shellcode = (
@@ -119,6 +122,13 @@ def bindShellcode(args):
 
 
 def revShellcode(args):
+
+	if len(args.lhost.split(".")) != 4: 
+		sys.exit("[!] Bad LHOST!")
+
+	if args.lport not in range(1,65536):
+		sys.exit("[!] Bad LPORT!")
+
 	host = ""
 	addr = args.lhost.split(".")
 	for a in addr:
@@ -167,20 +177,7 @@ print "\n",args,"\n"
 
 error = False
 if len(args.egg) != 8: 
-	print "[!] Bad EGG!"
-	error = True
-
-if len(args.lhost.split(".")) != 4: 
-	print "[!] Bad LHOST!"
-	error = True
-
-if args.lport not in range(1,65536):
-	print "[!] Bad LPORT!"
-	error = True	
-
-if error: 
-	print
-	sys.exit()
+	sys.exit("[!] Bad EGG!")
 
 args.func(args)
 ```
