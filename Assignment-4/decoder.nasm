@@ -1,8 +1,8 @@
 ; insertion decoder
 ;
 ; expected format:
-;		byte[0] 	  --> length of shellcode
-;		byte[odd]	  --> junk
+;		byte[0] 	--> length of shellcode
+;		byte[odd]	--> junk
 ;		byte[even]	--> shellcode
 
 global _start
@@ -13,17 +13,17 @@ _start:
 
 decoder:
 	pop esi
-	mov dl, byte [esi] 			; byte[0] 	--> length of shellcode
-	xor ecx, ecx 				    ; counter = 0
+	mov dl, byte [esi] 		; byte[0] 	--> length of shellcode
+	xor ecx, ecx 			; counter = 0
 
 decode:
 	mov bl, byte [esi+ecx+2]	; next shellcode byte
-	mov byte [esi], bl			  ; move shellcode to current position
-	inc esi						        ; next position
-	inc ecx 					        ; counter++
-	cmp cl, dl 				        ; at the end of shellcode?
-	jnz short decode 			    ; 	if not, keep decoding
-	jmp short shellcode			  ; 	else, execute decoded shellcode
+	mov byte [esi], bl		; move shellcode to current position
+	inc esi				; next position
+	inc ecx 			; counter++
+	cmp cl, dl 			; at the end of shellcode?
+	jnz short decode 		; 	if not, keep decoding
+	jmp short shellcode		; 	else, execute decoded shellcode
 
 
 stage:
