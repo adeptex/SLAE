@@ -175,7 +175,6 @@ a.add_argument("--outfile", "-o", default="hunter", help="Output ELF executable 
 args = a.parse_args()
 print "\n",args,"\n"
 
-error = False
 if len(args.egg) != 8: 
 	sys.exit("[!] Bad EGG!")
 
