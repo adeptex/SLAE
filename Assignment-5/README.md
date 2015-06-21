@@ -16,6 +16,6 @@ Student ID: SLAE-670
 
 The solution is broken up into three parts:
 
-- ![linux/x86/adduser](https://github.com/adeptex/SLAE/tree/master/Assignment-5/chmod "linux/x86/adduser")
+- ![linux/x86/adduser](https://github.com/adeptex/SLAE/tree/master/Assignment-5/adduser "linux/x86/adduser")
 - ![linux/x86/chmod](https://github.com/adeptex/SLAE/tree/master/Assignment-5/chmod "linux/x86/chmod")
-- ![linux/x86/read_file](https://github.com/adeptex/SLAE/tree/master/Assignment-5/chmod "linux/x86/read_file")
+- ![linux/x86/read_file](https://github.com/adeptex/SLAE/tree/master/Assignment-5/read_file "linux/x86/read_file")
