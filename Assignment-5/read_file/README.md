@@ -130,3 +130,5 @@ This shellcode uses the JMP-CALL-POP technique to get the address of the payload
 A sample run produces the following output:
 
 ![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-5/read_file/example.png "Example")
+
+Note: while executing a5-msf_readfile, the reported shellcode length is 4. This is of course due to the presence of NULL bytes in the shellcode.
