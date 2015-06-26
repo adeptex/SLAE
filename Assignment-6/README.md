@@ -16,6 +16,6 @@ Student ID: SLAE-670
 
 The solution is broken up into three parts:
 
-- ![linux/x86/adduser](https://github.com/adeptex/SLAE/tree/master/Assignment-6/dlexec "dlexec")
-- ![linux/x86/chmod](https://github.com/adeptex/SLAE/tree/master/Assignment-6/passwd "passwd")
-- ![linux/x86/read_file](https://github.com/adeptex/SLAE/tree/master/Assignment-6/rot7 "rot7")
+- ![dlexec](https://github.com/adeptex/SLAE/tree/master/Assignment-6/dlexec "dlexec")
+- ![passwd](https://github.com/adeptex/SLAE/tree/master/Assignment-6/passwd "passwd")
+- ![rot7](https://github.com/adeptex/SLAE/tree/master/Assignment-6/rot7 "rot7")
