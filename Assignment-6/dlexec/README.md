@@ -93,7 +93,7 @@ download:
 	push ebx
 	mov ecx, esp		
 	int 0x80 			; download
-	```
-	
-	As can be observed and verified, the morphed version is 12 bytes shorter than the original sample from Shell-Storm.
+```
+
+As can be observed and verified, the morphed version is 12 bytes shorter than the original sample from Shell-Storm.
 
