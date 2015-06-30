@@ -36,7 +36,7 @@ If we break after the shellcode has been decoded, we can see that the decoded ve
 
 ### Polymorphic Shellcode
 
-Just like in the original Shell-Storm post, we will need a ROT7 encoder for our decoder to use. We will also use an `execve()` shellcode for this example.
+Just like in the original Shell-Storm post, we will need a ROT7 encoder for our decoder to use. We will also use an `execve()` shellcode for this example. One important design decision about this encoder, is that the first byte of the encoded shellcode is length of the plaintext shellcode. This allows to dynamically adjust for any plaintext shellcode, as long as it does not exceed the length of `0xff`, of course. This is taken into account for the decoder code. 
 
 ### a6-rot7-encode.py
 ```python
