@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(int arc, char* argv[]) {
+int main(int argc, char* argv[]) {
 	char *p;
 	
 	if (argc < 3) {
