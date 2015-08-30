@@ -12,5 +12,5 @@ int main(int argc, char* argv[]) {
 	
 	p = getenv(argv[1]);
 	p += (strlen(argv[0]) - strlen(argv[2]))*2;
-	printf("%s will be at %p", argv[1], p);
+	printf("%s will be at %p\n", argv[1], p);
 }
