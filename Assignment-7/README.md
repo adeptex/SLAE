@@ -14,7 +14,7 @@ Student ID: SLAE-670
 
 ## Solution
 
-To complete this task, we are going to create an ![https://en.wikipedia.org/wiki/Advanced_Encryption_Standard](AES-128 crypter) implementation in C. The crypter will take shellcode and a key as arguments; apply the Rijndael-128 cipher in CBC mode with a randomly generated initialization vector (IV); and generate an ELF executable with the decryption routine along with the key and the encrypted shellcode. The decryptor will also be implemented in C. 
+To complete this task, we are going to create an ![AES-128](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) crypter implementation in C. The crypter will take shellcode and a key as arguments; apply the Rijndael-128 cipher in CBC mode with a randomly generated initialization vector (IV); and generate an ELF executable with the decryption routine along with the key and the encrypted shellcode. The decryptor will also be implemented in C. 
 
 The following is the crypter implementation:
 
